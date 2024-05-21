@@ -16,8 +16,13 @@ class TaskControllerImpl(val taskService: TaskService) : TaskController {
         return taskService.getAll()
     }
 
-    @PostMapping("/create")
+    @GetMapping("/create")
     override fun createTask(@RequestParam desc: String, @RequestParam title: String): TaskEntity {
         return taskService.addTask(desc, title)
+    }
+
+    @GetMapping("/delete")
+    override fun deleteTask(@RequestParam id: Int) {
+        taskService.deleteTask(id)
     }
 }

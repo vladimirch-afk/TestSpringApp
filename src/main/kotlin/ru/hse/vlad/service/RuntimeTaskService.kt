@@ -8,12 +8,17 @@ import ru.hse.vlad.enities.TaskEntity
 class RuntimeTaskService : TaskService {
     val db = TaskDaoImpl()
     override fun getAll(): List<TaskEntity> {
-        return db.getAll()
+        val tasks = db.getAll()
+        return tasks
     }
 
     override fun addTask(desc: String, title: String) : TaskEntity {
-        val newTask = TaskEntity(title, desc)
+        val newTask = TaskEntity(db.getMaxId() + 1, title, desc)
         db.addTask(newTask)
         return newTask
+    }
+
+    override fun deleteTask(id: Int) {
+        db.deleteTask(id)
     }
 }
