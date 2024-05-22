@@ -72,12 +72,6 @@ class DemoApplicationTest {
 		service.deleteTask(1)
 		service.deleteTask(2)
 		service.deleteTask(3)
-//		var i = prev.size
-//		for (curr in prev) {
-//			service.deleteTask(curr.id)
-//			--i
-//			Assertions.assertEquals(true, service.getAll().size == i)
-//		}
 
 		Mockito.verify(taskDao, Mockito.times(1))
 			.deleteTask(1)
