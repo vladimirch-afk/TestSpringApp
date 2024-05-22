@@ -1,4 +1,4 @@
-package ru.hse.vlad.enities
+package ru.hse.vlad.entities
 
 data class TaskEntity(
     val id : Int,

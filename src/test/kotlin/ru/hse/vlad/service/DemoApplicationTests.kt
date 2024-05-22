@@ -1,63 +1,90 @@
 package ru.hse.vlad.service
 
 import org.junit.jupiter.api.Test
-import org.springframework.boot.test.context.SpringBootTest
-import ru.hse.vlad.enities.TaskEntity
-import ru.hse.vlad.services.RuntimeTaskService
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.extension.ExtendWith
+import org.mockito.InjectMocks
+import org.mockito.Mock
+import org.mockito.Mockito
 import org.mockito.junit.jupiter.MockitoExtension
+import ru.hse.vlad.dao.TaskDao
+import ru.hse.vlad.entities.TaskEntity
 
-@SpringBootTest
 @ExtendWith(MockitoExtension::class)
 class DemoApplicationTest {
 
-	val service = RuntimeTaskService()
+	@Mock
+	lateinit var taskDao : TaskDao
+
+	@InjectMocks
+	lateinit var service: RuntimeTaskService
 
 	@Test
 	fun add__success() {
-		val res1 = TaskEntity(1, "1", "1")
-		Assertions.assertEquals(res1, service.addTask("1", "1"))
-		val res2 = TaskEntity(2, "2", "2")
-		Assertions.assertEquals(res2, service.addTask("2", "2"))
-		val res3 = TaskEntity(3, "3", "3")
-		Assertions.assertEquals(res3, service.addTask("3", "3"))
+		Mockito.`when`(taskDao.addTask("1", "2"))
+			.thenReturn(TaskEntity(1, "1", "2"))
+		Mockito.`when`(taskDao.addTask("2", "3"))
+			.thenReturn(TaskEntity(2, "2", "3"))
+		Mockito.`when`(taskDao.addTask("3", "4"))
+			.thenReturn(TaskEntity(3, "3", "4"))
+
+		val res1 = TaskEntity(1, "1", "2")
+		Assertions.assertEquals(res1, service.addTask("2", "1"))
+		val res2 = TaskEntity(2, "2", "3")
+		Assertions.assertEquals(res2, service.addTask("3", "2"))
+		val res3 = TaskEntity(3, "3", "4")
+		Assertions.assertEquals(res3, service.addTask("4", "3"))
+
+		Mockito.verify(taskDao, Mockito.times(1))
+			.addTask("1", "2")
+		Mockito.verify(taskDao, Mockito.times(1))
+			.addTask("2", "3")
+		Mockito.verify(taskDao, Mockito.times(1))
+			.addTask("3", "4")
 		println("TEST_1 COMPLETED")
 	}
 
 	@Test
-	fun delete__success() {
-		val prev = service.getAll().toMutableList()
-		val lastInd = prev.last().id
-		prev.addAll(listOf(TaskEntity(lastInd + 1, "10", "11"),
-			TaskEntity(lastInd + 2, "12", "13"),
-			TaskEntity(lastInd + 3, "14", "15")))
+	fun find__success() {
+		Mockito.`when`(taskDao.getAll())
+			.thenReturn(listOf(
+				TaskEntity(1, "1", "2"),
+				TaskEntity(2, "2", "3"),
+				TaskEntity(3, "3", "4")
+			))
 
-		service.addTask("11", "10")
-		service.addTask("13", "12")
-		service.addTask("15", "14")
-		var i = prev.size
-		for (curr in prev) {
-			service.deleteTask(curr.id)
-			--i
-			Assertions.assertEquals(true, service.getAll().size == i)
-		}
+		val res = service.getAll()
+		val expected = listOf(
+			TaskEntity(1, "1", "2"),
+			TaskEntity(2, "2", "3"),
+			TaskEntity(3, "3", "4")
+		)
+
+		Assertions.assertEquals(expected, res)
+		Mockito.verify(taskDao, Mockito.times(1))
+			.getAll()
 		println("TEST_2 COMPLETED")
 	}
 
 	@Test
-	fun find__success() {
-		val prev = service.getAll().toMutableList()
-		val lastInd = prev.last().id
-		prev.addAll(listOf(TaskEntity(lastInd + 1, "10", "11"),
-			TaskEntity(lastInd + 2, "12", "13"),
-			TaskEntity(lastInd + 3, "14", "15")))
+	fun delete__success() {
 
-		service.addTask("11", "10")
-		service.addTask("13", "12")
-		service.addTask("15", "14")
+		service.deleteTask(1)
+		service.deleteTask(2)
+		service.deleteTask(3)
+//		var i = prev.size
+//		for (curr in prev) {
+//			service.deleteTask(curr.id)
+//			--i
+//			Assertions.assertEquals(true, service.getAll().size == i)
+//		}
 
-		Assertions.assertEquals(prev, service.getAll())
+		Mockito.verify(taskDao, Mockito.times(1))
+			.deleteTask(1)
+		Mockito.verify(taskDao, Mockito.times(1))
+			.deleteTask(2)
+		Mockito.verify(taskDao, Mockito.times(1))
+			.deleteTask(3)
 		println("TEST_3 COMPLETED")
 	}
 }

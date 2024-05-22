@@ -1,6 +1,6 @@
-package ru.hse.vlad.services
+package ru.hse.vlad.service
 
-import ru.hse.vlad.enities.TaskEntity
+import ru.hse.vlad.entities.TaskEntity
 
 interface TaskService {
     fun getAll() : List<TaskEntity>

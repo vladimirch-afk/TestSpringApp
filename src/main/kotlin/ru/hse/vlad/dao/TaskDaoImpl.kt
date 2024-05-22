@@ -1,16 +1,16 @@
 package ru.hse.vlad.dao
 
-import ru.hse.vlad.enities.TaskEntity
+import org.springframework.stereotype.Component
+import ru.hse.vlad.entities.TaskEntity
 import java.sql.Connection
 import java.sql.DriverManager
 
-
+@Component
 class TaskDaoImpl : TaskDao {
-    val db : MutableList<TaskEntity> = mutableListOf()
-    var connection : Connection? = null
-    val user = "postgres"
-    val password = "password"
-    val databaseName = "postgres"
+    private final var connection : Connection? = null
+    private final val user = "postgres"
+    private final val password = "password"
+    private final val databaseName = "postgres"
     val table = "tasks"
     init {
         try {
@@ -44,21 +44,22 @@ class TaskDaoImpl : TaskDao {
         return res.toList()
     }
 
-    override fun addTask(task: TaskEntity) {
+    override fun addTask(title : String, desc : String) : TaskEntity {
         try {
             val statement = connection?.prepareStatement(
-                "INSERT INTO $table (title, description) VALUES('${task.title}', '${task.message}')"
+                "INSERT INTO $table (title, description) VALUES('${title}', '${desc}')"
             )
             statement?.executeUpdate()
         } catch (e: Exception) {
             throw Exception(e.message)
         }
+        return TaskEntity(getMaxId() + 1, title, desc)
     }
 
     override fun deleteTask(id: Int) {
         try {
             val statement = connection?.prepareStatement(
-                "DELETE FROM ${table} WHERE id = ${id}"
+                "DELETE FROM $table WHERE id = $id"
             )
             statement?.executeUpdate()
         } catch (e: Exception) {
@@ -70,13 +71,13 @@ class TaskDaoImpl : TaskDao {
         var maxId : Int? = -1
         try {
             val statement = connection?.prepareStatement(
-                "SELECT MAX(id) FROM ${table}"
+                "SELECT MAX(id) FROM $table"
             )
             val res = statement?.executeQuery()
             res?.next()
             maxId = res?.getInt(1)
             statement?.close()
-        } catch (e: Exception) { }
+        } catch (_: Exception) { }
         return if (maxId == -1) 0 else maxId!!
     }
 }

@@ -1,12 +1,11 @@
 package ru.hse.vlad.controller
 
 import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import ru.hse.vlad.api.TaskController
-import ru.hse.vlad.enities.TaskEntity
-import ru.hse.vlad.services.TaskService
+import ru.hse.vlad.entities.TaskEntity
+import ru.hse.vlad.service.TaskService
 
 @RestController
 class TaskControllerImpl(val taskService: TaskService) : TaskController {

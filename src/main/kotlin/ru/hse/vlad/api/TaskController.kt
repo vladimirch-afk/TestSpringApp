@@ -1,6 +1,6 @@
 package ru.hse.vlad.api
 
-import ru.hse.vlad.enities.TaskEntity
+import ru.hse.vlad.entities.TaskEntity
 
 interface TaskController {
     fun findAll() : List<TaskEntity>
