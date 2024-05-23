@@ -10,7 +10,7 @@ data class TaskEntity(
             return false
         }
         return title == other.title &&
-                message == other.message
+                message == other.message && id == other.id
     }
 
     override fun hashCode(): Int {
